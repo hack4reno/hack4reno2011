@@ -1,0 +1,53 @@
+h1. Voxeo Transcriptions Server
+
+h2. Overview
+
+This application creates a RESTful web service for you on <a href='http://appengine.google.com'>Google AppEngine</a> for receiving the Voxeo Transcriptions from our Tropo.com Record method. We used <a href='http://code.google.com/p/appengine-jruby/'>AppEngine-JRuby</a> to create the container application for a <a href='http://sinatrarb.com'>Sinatra</a> based Web API server.
+
+h2. Requirements
+
+* Ruby 1.8.6+
+* <a href='http://git-scm.com/'>Git</a>
+* Gems
+** Sinatra 0.9.2+
+** dm-core 0.10.0+
+** dm-appengine 0.10.0+ 
+** <a href='http://code.google.com/p/appengine-jruby/'>appengine-jruby</a>
+* <a href='http://appengine.google.com'>Google AppEngine Account</a>
+
+h2. Installation
+
+First is to install the appengine-jruby gem on your system:
+
+<pre><code>sudo gem install google-appengine</code></pre>
+
+Then either use git to clone the tropo-transcriptions source code or download from Github:
+
+<pre><code>git clone git://github.com/voxeo/tropo-transcriptions.git</code></pre>
+
+Then edit the config.ru file:
+
+<pre><code>mate tropo-transcriptions/config.ru
+
+Change :application => 'tropo-transcrptions' to :application => 'your-GAE-app-name'</code></pre>
+
+Then, deploy:
+
+<pre><code>cd tropo-transcriptions/
+appcfg.rb update .</code></pre>
+
+h2. Usage
+
+URL to use when initiating a Record request in Tropo.com:
+
+<pre><code>:transcriptionOutURI => 'http://myapp.appspot.com/receive_transcription'</code></pre>
+
+URL to use to see all transcription result:
+
+<pre><code>http://voxeo-transcriptions.appspot.com/transcriptions</code></pre>
+		
+URL to use to see a single transcription result:
+
+<pre><code>http://voxeo-transcriptions.appspot.com/transcription?guid=5fad8750-7316-012c-00bd-0400580fde23</code></pre>
+
+

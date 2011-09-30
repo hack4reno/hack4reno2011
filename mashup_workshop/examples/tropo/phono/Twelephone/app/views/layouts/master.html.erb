@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <title>Twelephone - <%= @title || "Powered by Phono" %></title>
+    <%= stylesheet_link_tag 'master' %>
+    <%= javascript_include_tag :defaults %>
+
+	<script language="javascript" type="text/javascript"> 
+	<!--
+	function popitup(url) {
+		var left = (screen.width/2)-(275/2);
+		var top = (screen.height/2)-(375/2);
+		newwindow=window.open(url,'name', 'height=375,width=275,toolbars=no,menubar=no,location=no,scrollbars=no,resizable=yes,status=no,top='+top+', left='+left);
+		
+		// newwindow=window.open(url,'name', 'toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=no,copyhistory=no,scrollbars=no,height=375,width=275,left=0,top=0,screenX=0,screenY=0');
+		
+		if (window.focus) {newwindow.focus()}
+		return false;
+	}
+ 
+	// -->
+	</script>
+	
+	<script type="text/javascript">
+
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-119008-18']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+
+	</script>
+	
+	
+  </head>
+  <body>
+	<div id='topwrap'>
+      <div id='header'>
+      <h1><a href="/"><img src="/images/twelephonelogo.gif" alt="Twelephone"></a></h1>
+  </div>
+      <div class='clearfix'></div>
+	</div>
+    <div id='wrapper'>
+      <div id='header'>
+        <div id='user_bar'>
+          <% if logged_in? %>
+            <%= image_tag(current_user.profile_image_url, :width => 24, :height => 24) %> Logged in as <strong>@<%= current_user.login %></strong> <%= link_to "Home", '/' %> | <%= link_to "My Profile", user_path(current_user) %> | <%= link_to 'Log out', '/logout' %>
+          <% else %>
+            <%= link_to 'Login via Twitter', '/login' %>
+          <% end %>
+        </div>
+        <div class='clearfix'></div>
+      </div>
+      <div id='contents'>
+        <% if flash[:error] %>
+          <div class='flash error'><%= flash[:error] %></div>
+        <% end %><% if flash[:notice] %>
+          <div class='flash notice'><%= flash[:notice] %></div>
+        <% end %>
+        <%= yield %>
+		<br/>
+      </div>
+    </div>
+    <div id='footer'>
+      
+	Powered by <br/><br/>
+	<a href="http://phono.com"><img src="/images/logo-home-big.png" border="0" width="50"></a><br/><br/><br/><br/><br/>
+    </div><br/><br/><br/><br/><br/>
+  </body>
+</html>

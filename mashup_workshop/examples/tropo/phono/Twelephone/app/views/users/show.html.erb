@@ -1,0 +1,54 @@
+<% if @user %>
+<br>
+<%= profile_image(@user) %> 
+<br>
+<h2><%= @user.name %> (<%= link_to twitter_name(@user), "http://twitter.com/" + @user.login %>) </h2>
+
+<p>
+		<div id="generalform">
+		<% remote_form_for :twele, :url=>{:controller=>"users", :action=>"tweetcall", :before => "$('spinner').show()", :complete => "$('spinner').hide()" }, :html => {:name => 'twele'} do |f| %>
+		<p>
+		<% if @user.id == current_user.id %>
+		Who would you like to call?<br/>
+			@<%= f.text_field :target %>
+		<% else %>
+			<%= f.hidden_field :target, :value => @user.login %>
+		<% end %>
+		<%= submit_tag "Call"%></p>
+		<% end %>
+		</div>
+		<div id="spinner" style="display: none;"><img src="/images/spinner.gif"></div>
+	
+	<div id="results"></div>
+</p>
+<%# link_to('test', nil, :onclick => "if(confirm('Call " + @user.login + "?')){popitup('/call/" + @user.login + "');}; return false;")%>	
+
+<% if @user.id == current_user.id %>
+Phone: <%= @user.phone %>	<%= link_to_function('edit') do |page|
+		# page['tag_' + verse.id.to_s].toggle :slide
+		page.visual_effect :toggle_blind, 'updatephone'
+	end %>
+
+<div id="updatephone" style="display:none;">
+	<div id="generalform">
+	<% form_for :twele, :url=>{:controller=>"users", :action=>"updatephone"}, :html => {:name => 'twele'} do |f| %>
+	<p><b>Update your phone number to your account (no one will ever see this number)</b><br/>
+		<%= f.text_field :phone %>
+	<%= submit_tag "Submit"%></p>
+	<% end %>
+	</div>
+</div>
+<br>
+<% end %>
+
+Location: <%= @user.location %><br>
+Bio: <%= @user.description %><br>
+
+<% else %>
+<center><h1>User not found... <a href="/">Return</a></h1></center>
+<% end %>
+
+<div class='clearfix'></div>
+
+							
+

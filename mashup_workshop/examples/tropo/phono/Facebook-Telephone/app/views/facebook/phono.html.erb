@@ -1,0 +1,398 @@
+<html>
+    <head>
+        <meta http-equiv="PRAGMA" content="NO-CACHE" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="/stylesheets/phono.css" rel="stylesheet" type="text/css" />
+		<title>Telephone</title>
+
+	    <script src="/javascripts/jquery_1_4_2.js" type="text/javascript" ></script>
+	    
+	    <script src="/javascripts/phono-0.8.44504.js" type="text/javascript" ></script>
+
+		<script type="text/javascript">
+		$(document).ready(function(){
+			$(".dialpad_button").click(function(){
+				$("#slide_panel").toggle("slow");
+			});
+			$(".short_button").click(function(){
+				$("#short_panel").slideToggle("slow");
+			});
+
+		});
+
+		function addLink(text)
+		{
+		var TheTextBox = document.getElementById("dialstring");
+		TheTextBox.value = TheTextBox.value + text;
+		}
+		
+		function placeCall()
+		{
+		var dialString = document.getElementById("dialstring");
+		var destString = document.getElementById("destinationTxt");
+		var didString = document.getElementById("did");
+		// destString.value = "app:9991443313"
+		if(dialString.value.substring(0,1) == '1')
+		{
+			didString.value = dialString.value;
+		}
+		else
+		{
+			didString.value = '1' + dialString.value;
+		}
+		
+		// Determine SIP or PSTN
+		if(dialString.value.substring(0,1) == 's') 
+		{
+			destString.value = dialString.value;
+		}
+		else
+		{
+			// destString.value = "app:9991443313";
+			// destString.value = "app:9991457150";
+			destString.value = "sip:9991452579@stagingsbc-external.orl.voxeo.net";
+			
+		}
+		
+		makeCall();
+		}
+		function dialClear()
+		{
+			var dialString = document.getElementById("dialstring");
+			dialString.value = "";
+		}
+		</script>
+		
+		
+    </head>
+    <body>
+<center>		
+			
+        <div id="phone01" style="height: 1px; width: 1px"></div>
+</center>        
+  
+        <script type="text/javascript">
+            var call;
+
+            var phone = $.phono({
+                flashMovie:"/phono-0.8.44504.swf",
+                tones: true,
+                onConnect: function(event) {
+                    $("#sessionId").val(event.phone.sessionId());
+					<% if @did %>
+                    
+						makeCall();
+						
+					<% else %>
+						$.ajax({ url: '/facebook/update_phonoaddress', data: { 'mysession': $('#sessionId').val()}, type: 'post' })
+					
+						$("#callstart").hide();
+						$("#callstop").hide();
+						$("#answer").hide();
+						$("#reject").hide();
+						$("#shortlink").hide();
+						$("#avatars").hide();
+					
+					
+					<% end %>
+					
+					if( ! event.phone.flashPermissionState() ){
+                		event.phone.showFlashPermissionBox();
+                	}
+                },
+                onIncomingCall: function(event) {
+                    call = event.call;
+					$("#redial").hide();
+					$("#shortlink").hide();
+					$("#answer").show();
+					$("#reject").show();
+					$("#dialform").hide();
+					$("#dialstart").hide();
+					$("#dialclear").hide();
+					
+					window.focus();
+                },
+                onAnswer: function(event) {
+					$("#answer").hide();
+					$("#reject").hide();
+					$("#callstop").show();
+					$("#dialform").hide();
+					$("#dialstart").hide();
+					$("#dialclear").hide();
+					$("#avatars").show();
+					
+					call.talking(true);
+					
+					
+                },
+                onHangup: function(event) {
+					$("#answer").hide();
+					$("#reject").hide();
+					$("#callstop").hide();
+					$("#dialform").show();
+					$("#dialstart").show();
+					$("#dialclear").show();
+					$("#shortlink").hide();
+					$("#avatars").hide();
+					
+					
+					
+                },
+                onDisconnect: function(event) {
+					$("#answer").hide();
+					$("#reject").hide();
+					$("#callstop").hide();
+					$("#dialform").show();
+					$("#dialstart").show();
+					$("#dialclear").show();
+					$("#shortlink").hide();
+					$("#avatars").hide();
+					
+					
+                },
+                onFlashPermissionShow: function(event) {
+                    
+                },
+                onFlashPermissionHide: function(event) {
+                    
+                }    
+            });
+            function makeCall() {
+                numberToDial = $("#destinationTxt").val();
+				// $("#shortlink").show();
+				$("#callstop").show();
+				$("#redial").hide();
+				$("#dialstart").hide();
+				$("#dialclear").hide();
+				
+                call = phone.dial(numberToDial, {
+                    headers: {
+						numberToDial: $("#did").val(),
+						transfermode: "<%=@transfermode rescue ""%>",
+						conf: "<%=@conf rescue ""%>"
+                    },
+                    onAnswer: function(event) {	
+						$("#callstart").hide();
+						$("#callstop").show();
+						$("#redial").hide();
+						$("#dialform").hide();
+						$("#dialstart").hide();
+						$("#dialclear").hide();
+						$("#avatars").show();
+						
+						
+						call.talking(true);
+                    },
+                    onHangup: function() {
+						// $("#callstart").toggle("fast");
+						// $("#callstop").toggle("fast");
+						$("#redial").hide();
+						$("#callstop").hide();
+						$("#dialform").show();
+						$("#dialstart").show();
+						$("#dialclear").show();
+						$("#shortlink").hide();
+						$("#avatars").hide();
+						
+						
+						$.ajax({ url: '/facebook/update_phonoaddress', data: { 'mysession': $('#sessionId').val()}, type: 'post' })
+                    },
+                    onDisconnect: function() {
+						// $("#callstart").toggle("fast");
+						// $("#callstop").toggle("fast");
+						$("#redial").hide();
+						$("#callstop").hide();
+						$("#dialform").show();
+						$("#dialstart").show();
+						$("#dialclear").show();
+						$("#shortlink").hide();
+						$("#avatars").hide();
+						
+						
+						$.ajax({ url: '/facebook/update_phonoaddress', data: { 'mysession': $('#sessionId').val()}, type: 'post' })
+                    }
+                });
+            }
+            function sendIM() {
+                 destinationJid = $("#destinationJid").val()
+                 phone.text(destinationJid,"Hello");
+            }
+
+			// var counter = 0;
+            $(document).ready(function() {
+                window.setInterval(function() {
+                    try {
+                        $("#phoneState").val(phone.state());
+                        if(call != null) {
+                            $("#callState").val(call.state());
+                        }
+                    }
+                    catch(e) {
+                    }
+                },500);
+            });
+
+            
+        </script>
+		
+<!-- <div class="black_overlay"></div> -->
+<center>
+<div id="phono">
+
+	<!-- <div id="phone01" class="flash-hldr"></div> -->
+
+			<div id="short_panel" style="display:none;">
+				<center><br/>
+					Use this link to forward to friends: 
+					http://phono.com/<%=@linkid%>
+					
+					<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+					              width="110"
+					              height="14"
+					              class="clippy"
+					              id="clippy" >
+					      <param name="movie" value="/clippy.swf"/>
+					      <param name="allowScriptAccess" value="always" />
+					      <param name="quality" value="high" />
+					      <param name="scale" value="noscale" />
+					      <param NAME="FlashVars" value="text=http://phono.com/<%=@linkid%>">
+
+					      <param name="bgcolor" value="#000235">
+					      <param name="wmode" value="opaque">
+					      <embed src="/clippy.swf"
+					             width="110"
+					             height="14"
+					             name="clippy"
+					             quality="high"
+					             allowScriptAccess="always"
+					             type="application/x-shockwave-flash"
+					             pluginspage="http://www.macromedia.com/go/getflashplayer"
+					             FlashVars="text=http://phono.com/<%=@linkid%>"
+					             bgcolor="#000235"
+					             wmode="opaque"
+					      />
+					      </object>
+					
+				</center>
+			</div>
+			
+			<!div id="slide_panel" style="display:none;">
+			<div id="slide_panel">
+	
+<!-- 	            <input type="button" value="Mute" onclick="call.muted(true)"/>            
+	            <input type="button" value="Unmute" onclick="call.muted(false)">
+
+	            <input type="button" value="TonesOn" onclick="call.tones(true)"/>            
+	            <input type="button" value="TonesOff" onclick="call.tones(false)">
+	            <input type="button" value="Hold" onclick="if(call.hold()){call.hold(false);this.value='Unhold'}else{call.hold(true);this.value='Hold'}"/>
+	            <input type="text" value="1" onkeypress="call.volume(this.value)"/>
+	            <br/>
+	            <input type="button" value="Accept" onClick="call.accept()"/>
+	            <input type="button" value="Answer" onClick="call.answer()"/>
+	            <br/>
+	            <input type="text" id="destinationJid" value="pizzademo@tropo.im"/>
+	            <input type="button" value="Send" onClick="sendIM()"/>
+	            <br/>
+ -->
+				<!-- <hr/> -->
+				<center>	            
+	
+				<div id="dialform">
+		        <form name="dialer"> 
+				    <input type="hidden" id="phoneState" />
+				    <input type="hidden" id="callState" />
+				    <input type="hidden" id="sessionId" />
+
+					<input type="text" id="dialstring" value="<%=@display-%>">
+					<input type="hidden" id="destinationTxt" value="<%=@phone%>" />
+					<input type="hidden" id="did" value="<%=@did%>" />
+					<!-- <a href="javascript:window.close()"><img src="/images/delete.gif" align="right" width="25" border="0"></a> -->
+		        </form>
+				</div>
+	
+				<div class="digit-hldr">
+					<a class="digit 1" href="#" onclick="addLink('1');call.digit('1');"><span class="number">1</span></a>
+					<a class="digit 2" href="#" onclick="addLink('2');call.digit('2');"><span class="number">2</span><br><span class="abc">ABC</span></a>
+					<a class="digit 3" href="#" onclick="addLink('3');call.digit('3');"><span class="number">3</span><br><span class="abc">DEF</span></a>
+
+					<a class="digit 4" href="#" onclick="addLink('4');call.digit('4');"><span class="number">4</span><br><span class="abc">GHI</span></a>
+					<a class="digit 5" href="#" onclick="addLink('5');call.digit('5');"><span class="number">5</span><br><span class="abc">JKL</span></a>
+					<a class="digit 6" href="#" onclick="addLink('6');call.digit('6');"><span class="number">6</span><br><span class="abc">MNO</span></a>
+
+					<a class="digit 7" href="#" onclick="addLink('7');call.digit('7');"><span class="number">7</span><br><span class="abc">PQRS</span></a>
+					<a class="digit 8" href="#" onclick="addLink('8');call.digit('8');"><span class="number">8</span><br><span class="abc">GHI</span></a>
+					<a class="digit 9" href="#" onclick="addLink('9');call.digit('9');"><span class="number">9</span><br><span class="abc">WXYZ</span></a>
+
+					<a class="digit *" href="#" onclick="addLink('*');call.digit('*');"><span class="star">*</span></a>
+					<a class="digit 0" href="#" onclick="addLink('0');call.digit('0');"><span class="number">0</span><br><span class="abc">+</span></a>
+					<a class="digit #" href="#" onclick="addLink('#');call.digit('#');"><span class="number">#</span></a>
+					<br class="clearfix">
+				</div>
+				</center>		
+			</div>            
+			
+			<center>
+						
+				<div class="control-hldr">
+					<div id="answer" style="display:none;">
+						<a href="javascript:call.answer();" class="control-btn call"><span>Answer</span></a>
+						<!-- <a href="javascript:call.hangup();" class="control-btn endCall"><span>Reject</span></a> -->
+					</div>
+					<div id="redial" style="display:none;">
+						<a href="javascript:makeCall();" class="control-btn call"><span>Redial</span></a>
+					</div>
+					<div id="dialstart">
+						<a href="javascript:placeCall();" class="control-btn call"><span>Dial</span></a>
+					</div>
+					<div id="callstart" style="display:none;">
+						<a href="javascript:makeCall();" class="control-btn call"><span>Call</span></a>
+					</div>
+					<div id="callstop" style="display:none;">
+						<a href="javascript:call.hangup();" class="control-btn endCall"><span>End</span></a>
+					</div>
+					
+					<a class="logo-icon" title="www.Voxeo.com" target="_blank" href="http://www.voxeo.com"></a>
+
+					<div id="reject" style="display:none;">
+						<a href="javascript:call.hangup();" class="control-btn endCall"><span>Reject</span></a>
+					</div>
+
+					
+					<!-- <a href="#" class="control-btn talk" onmousedown="call.talking(true)" onmouseup="call.talking(false)"><span>Talk</span></a> -->
+					<div id="shortlink" style="display:none;">
+						<a class="short_button" href="#"><span class="number">Link</span></a>
+					</div>
+					<div id="dialclear">
+						<a class="control-btn talk" href="javascript:dialClear();"><span class="number">Clear</span></a>
+					</div>
+					<div id="dialpad" style="display:none;">
+						<a class="dialpad_button" href="javascript:call.digit('1');"><span class="number">Dialpad</span></a>
+					</div>
+					<!-- <a href="javascript:call.answer();" >Answer</a>				  -->
+					<br class="clearfix"/>
+				</div>
+			</center>
+			
+
+	</div>            
+	</center>
+	<script type="text/javascript" language="JavaScript">
+	document.forms['dialer'].elements['dialstring'].focus();
+	</script>
+		
+	<script type="text/javascript">
+
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-119008-17']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+
+	</script>
+	
+    </body>
+</html>

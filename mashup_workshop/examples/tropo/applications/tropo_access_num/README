@@ -1,0 +1,39 @@
+Tropo Access Number, v1.0
+Michael A. Soares <me@mikesoares.com>
+Copyright (c) 2010, Michael A. Soares
+
+Last Modified: October 30, 2010
+
+-------------------------------------------------------------------
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/&gt;.
+
+-------------------------------------------------------------------
+
+=== Description ===
+A simple script for beginners that can be uploaded to Tropo's servers and
+then be used as an access number to access a directory of numbers and make
+outgoing calls.
+
+It's useful if you have one of those "A-List" plans for your cell phone.
+Any calls or texts to your Tropo number get forwarded to your phone.
+
+=== Requirements ===
+A free Tropo developer account to start off:
+https://www.tropo.com/account/register.jsp
+
+=== Usage ===
+Upload tropo_access_num.php to Tropo as a Hosted File.
+Assign yourself a US number to call.
+Use that number as your access number.

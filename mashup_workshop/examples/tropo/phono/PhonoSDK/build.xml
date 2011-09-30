@@ -1,0 +1,35 @@
+<project name="phono" default="build">
+
+  <property file="build.properties" />
+
+  <target name="cruisecontrol" depends="build">
+		<mkdir dir="artifacts"/>
+    <zip destfile="artifacts/PhonoSDK-${build.version}.zip">
+      <zipfileset dir="target/sdk" prefix="phonosdk-${build.version}"/>
+      <zipfileset dir="installer/base" prefix="phonosdk-${build.version}" />
+    </zip>
+    <tar destfile="artifacts/PhonoSDK-${build.version}.tgz" compression="gzip">
+      <tarfileset dir="target/sdk" prefix="phonosdk-${build.version}"/>
+      <tarfileset dir="installer/base" prefix="phonosdk-${build.version}" />
+    </tar>
+  </target>
+  
+  <target name="build" depends="clean">
+    <antcall target="build-as-audio" />
+    <antcall target="build-js" />
+  </target>
+
+  <target name="build-as-audio">
+		<ant inheritAll="true" target="build" dir="modules/phono-as-audio" />
+  </target>
+
+  <target name="build-js">
+		<ant inheritAll="true" target="build" dir="modules/phono-js" />
+  </target>
+
+  <target name="clean">
+    <delete dir="target" />
+    <delete dir="artifacts" />
+  </target>
+
+</project>

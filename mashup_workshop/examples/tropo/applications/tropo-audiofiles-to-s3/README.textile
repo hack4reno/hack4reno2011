@@ -1,0 +1,59 @@
+h1. Tropo AudioFiles to Amazon S3 Server
+
+h2. Overview
+
+This app provides a Web Service written with <a href='http://sinatrarb.com'>Sinatra</a> to allow for files recorded on Tropo to be pushed from the Tropo cloud to <a href='http://aws.amazon.com/s3/'>Amazon S3</a>. This application may be run on your own servers or easily deployed to <a href='http://heroku.com'>Heroku</a>.
+
+h2. Requirements
+
+* Ruby 1.8.6+
+* Gems
+** Sinatra 0.9.2+
+* Amazon S3 Account
+* Optional
+** Heroku Account
+** Gems
+*** Heroku 1.1+
+
+h2. Installation
+
+First, get the app:
+
+<pre><code>git clone git://github.com/voxeo/tropo-audiofiles-to-s3.git</code></pre>
+
+Copy the sample configuration file for Amazon S3:
+
+<pre><code>cp ~/application-directory/config/amazon_s3.yml.sample ~/application-directory/config/amazon_s3.yml</code></pre>
+
+Install the required gems:
+
+<pre><code>sudo gem install sinatra aws-s3 heroku</code></pre>
+
+h2. Configuration
+
+Configure your Amazon S3 Bucket, Access Key and Secret Access key here:
+
+<pre><code>~/application-directory/config/amazon_s3.yml</code></pre>
+
+h3. Running on Your Own Server
+
+To run the app you may do the following:
+
+<pre><code>ruby ~/application-directory/tropo-audiofiles-to-s3.rb</code></pre>
+
+h4. Deploying to Heroku
+
+It is possible to push this app to be hosted by Heroku. First you will need a Heroku account and the Heroku gem:
+
+<pre><code>sudo gem install heroku</code></pre>
+
+After you have cloned the repo from Github above, you may do the following:
+
+<pre><code>cd ~/application-directory
+heroku create my-app-name
+git push heroku master
+</code></pre>
+
+(More from Heroku <a href='http://blog.heroku.com/archives/2009/3/5/32_deploy_merb_sinatra_or_any_rack_app_to_heroku/'>here</a>)
+
+Thats it, you may now start using the URL <a href='http://my-app-name.heroku.com/post_audio_to_s3'>http://my-app-name.heroku.com/post_audio_to_s3</a>.

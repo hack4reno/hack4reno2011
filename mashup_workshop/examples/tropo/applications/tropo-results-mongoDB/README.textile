@@ -1,0 +1,43 @@
+h1. Tropo Transcription Results to MongoDB @ Heroku
+
+h2. Overview
+
+This app provides a Web Service written with <a href='http://sinatrarb.com'>Sinatra</a> to allow for transcriptions from Tropo to be pushed from the Tropo cloud to <a href='http://www.mongodb.org/'>MongoDB</a> collection running on <a href='http://heroku.com'>Heroku</a>.
+
+h2. Requirements
+
+* Ruby 1.8.6+
+* Gems
+** Heroku
+** Sinatra
+** Mongo
+** Crack
+** Haml
+** bson_ext (for better MongoDB performance)
+
+h2. Installation
+
+First, get the app:
+
+<pre><code>git clone git://github.com/voxeo/tropo-results-mongodb.git</code></pre>
+
+Install the required gems:
+
+<pre><code>sudo gem install sinatra heroku mongo crack haml bson_ext</code></pre>
+
+h2. Deploying to Heroku
+
+It is possible to push this app to be hosted by Heroku. First you will need a Heroku account and the Heroku gem:
+
+<pre><code>sudo gem install heroku</code></pre>
+
+After you have cloned the repo from Github above, you may do the following:
+
+<pre><code>cd ~/application-directory
+heroku create my-app-name
+git push heroku master
+</code></pre>
+
+(More from Heroku <a href='http://blog.heroku.com/archives/2009/3/5/32_deploy_merb_sinatra_or_any_rack_app_to_heroku/'>here</a>)
+
+Thats it, you may now start using the URL <a href='http://my-app-name.heroku.com/transcription_results'>http://my-app-name.heroku.com/transcription_results</a>.

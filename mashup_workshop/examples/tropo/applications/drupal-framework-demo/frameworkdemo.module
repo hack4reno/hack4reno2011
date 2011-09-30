@@ -1,0 +1,173 @@
+<?php
+// Copyright 2010 Voxeo
+// MIT license
+//
+// Want a demo of the code? Call (424) 242-8946
+// Run it yourself by setting up a Tropo account
+// and setting your webAPI url to
+// http://your-drupal-site/frameworkdemo/answer
+//
+// http://www.tropo.com/
+//
+// You'll need the Tropo class from
+// http://github.com/tropo/tropo-webapi-php
+
+function frameworkdemo_menu() {
+  $items = array();
+
+  // Set up a route for the incoming call
+  $items['frameworkdemo/answer'] = array(
+    'page callback' => 'frameworkdemo_answer',
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  // After the initial media is played, We tell
+  // Tropo to redirect to here
+  $items['frameworkdemo/thanks'] = array(
+    'page callback' => 'frameworkdemo_thanks',
+    'access arguments' => array('access content'),
+    'page arguments' => array(1),
+    'type' => MENU_CALLBACK,
+  );
+  
+  $items['admin/frameworkdemo'] = array(
+    'title' => 'Framework Demo',
+    'description' => 'Set strings for framework demo',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('frameworkdemo_settings'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+
+function frameworkdemo_answer() {
+  // This is the PHP class for Tropo
+  include_once 'tropo-webapi-php/tropo.class.php';
+  $tropo = new Tropo();
+  // The Tropo session object contains the caller ID
+  try {
+    watchdog('frameworkdemo', "Tropo Session: " . file_get_contents("php://input")); 		
+    $session = new Session();
+    $caller = $session->getFrom();    
+  } catch (TropoException $e) {
+    $tropo->say('This module expects to be called from Tropo. Outputting json in demo mode.');
+    $caller['id'] = '123456790';
+  }
+  $number = $caller['id'];
+  $langs = array(
+      'es' => array('lang' => 'Spanish', 'voice' => 'Carmen'),
+      'de' => array('lang' => 'German', 'voice' => 'Katrin'),
+      'it' => array('lang' => 'Italian', 'voice' => 'Paola'),
+      'fr' => array('lang' => 'French', 'voice' => 'Bernard'),
+      'nl' => array('lang' => 'Dutch', 'voice' => 'saskia'),
+    );
+  $intro = variable_get('frameworkdemo_intro', 'Hello! Welcome to my Drupal module.');
+  $endpoint = "http://ajax.googleapis.com/ajax/services/language/translate?v=1.0&q=" . urlencode($intro); 
+  // Speak this text to the phone.
+  $tropo->say($intro, array('voice' => 'Victor'));
+  foreach ($langs as $code => $details) {
+    $json = drupal_http_request($endpoint . "&langpair=en|$code");
+    $translation = json_decode($json->data, TRUE);
+    $tropo->say("In {$details['lang']}.", array('voice' => 'Victor'));
+    $tropo->say($translation['responseData']['translatedText'], array('voice' => $details['voice']));
+  }
+  $tropo->ask(variable_get('frameworkdemo_question', 'Have you used Drupal before? Answer yes or no.'), array('voice' => 'Victor', 'choices' => variable_get('frameworkdemo_grammar', 'yes, no')));
+  $tropo->say(variable_get('frameworkdemo_thanks', 'Thanks for participating! Goodbye.'), array('voice' => 'Victor'));
+
+  $_SESSION['caller'] = $number;
+  // Tell Tropo that when this document is done, redirect to frameworkdemo/thanks
+  $tropo->on(array('event' => 'continue', 'next' => url('frameworkdemo/thanks/')));
+  // Do it on hangup, too.
+  $tropo->on(array('event' => 'hangup', 'next' => url('frameworkdemo/thanks/')));
+  // Output the JSON for Tropo to read
+  print $tropo;
+}
+
+function frameworkdemo_thanks() {
+  include_once 'tropo-webapi-php/tropo.class.php';
+  watchdog('frameworkdemo', "Tropo Result: " . file_get_contents("php://input")); 		
+  
+  $result = new Result();
+  $answer = $result->getValue();
+
+  $tropo = new Tropo();
+  // Message allows us to send a text message.
+  $tropo->message(variable_get('frameworkdemo_message', "Thanks for coming to the talk. Want to try Tropo? It's free for development at Tropo.com"), array('to' => $_SESSION['caller'], 'network' => 'SMS'));
+  // Save the number as a node
+  frameworkdemo_save($_SESSION['caller'], $answer);
+  
+  print $tropo;
+}
+
+
+function frameworkdemo_save($number, $answer='No response') {
+  // For the demo, replace the last two digits
+  // in the number with xx so we don't expose
+  // people's phone numbers.
+  $number = preg_replace('/\d\d$/', 'xx', $number);
+  $node = new stdclass();
+  $node->type = 'article';
+  node_object_prepare($node);
+
+  // The node title will be the phone number
+  $node->title = $number;
+  $node->language = LANGUAGE_NONE;
+  $body = variable_get('frameworkdemo_body', "Used Drupal before?") . ' ' . $answer;
+  $node->body[LANGUAGE_NONE][0]['value'] = $body;
+  $node->body[LANGUAGE_NONE][0]['format'] = 'filtered_html';
+  $node->promote = 1; // Promote to front page
+  $node->status = 1; // Publish
+  node_save($node);
+}
+
+function frameworkdemo_settings() {
+  $form['frameworkdemo_intro'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Intro'),
+    '#default_value' => variable_get('frameworkdemo_intro', 'Hello! Welcome to my Drupal module.'),
+    '#description' => t('How should Drupal answer the phone?'),
+  );
+
+  $form['frameworkdemo_message'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Thank you message'),
+    '#default_value' => variable_get('frameworkdemo_message', "Thanks for coming to the talk. Want to try Tropo? It's free for development at www.Tropo.com"),
+    '#description' => t('What text message should Drupal send?'),
+  );
+
+  $form['frameworkdemo_question'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Question'),
+    '#default_value' => variable_get('frameworkdemo_question', 'Have you used Drupal before? Answer yes or no.'),
+    '#description' => t('What question should Drupal ask the caller?'),
+  );
+
+  $form['frameworkdemo_grammar'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Grammar'),
+    '#default_value' => variable_get('frameworkdemo_grammar', 'yes, no'),
+    '#description' => t('What are the valid responses to the question? Comma seperated, letters only.'),
+  );
+
+  $form['frameworkdemo_thanks'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Thanks'),
+    '#default_value' => variable_get('frameworkdemo_thanks', 'Thanks for participating! Goodbye.'),
+    '#description' => t('How should Drupal sign off the call?'),
+  );
+
+
+  $form['frameworkdemo_body'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Node body'),
+    '#default_value' => variable_get('frameworkdemo_body', "Used Drupal before?"),
+    '#description' => t('Prefix the user\'s answer with this in the node body.'),
+  );
+
+
+  return system_settings_form($form);
+}

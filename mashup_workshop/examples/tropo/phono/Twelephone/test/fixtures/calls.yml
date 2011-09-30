@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  timestamp: 1
+  author: MyString
+  target: MyString
+
+two:
+  timestamp: 1
+  author: MyString
+  target: MyString

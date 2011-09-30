@@ -1,0 +1,44 @@
+<p>
+	Have you ever wanted to call someone directly via Twitter? Well now you can with Twelephone! Simply enter a Twitter username below and if they're registered with us we'll call them.  No one ever sees the other person's phone number.
+</p>
+
+<p>
+<% if logged_in? %>
+
+	<% if current_user.phone.nil? %>
+	
+		<div id="generalform">
+		<% form_for :twele, :url=>{:controller=>"users", :action=>"updatephone"}, :html => {:name => 'twele'} do |f| %>
+		<p><b>Please add your phone number to your account (no one will ever see this number)</b><br/>
+			<%= f.text_field :phone %>
+		<%= submit_tag "Submit"%></p>
+		<% end %>
+		</div>		
+	
+	<% else %>
+
+		<div id="generalform">
+		<% remote_form_for :twele, :url=>{:controller=>"users", :action=>"tweetcall", :before => "$('spinner').show()", :complete => "$('spinner').hide()" }, :html => {:name => 'twele'} do |f| %>
+		<p>Who would you like to call?<br/>
+			@<%= f.text_field :target %>
+		<%= submit_tag "Call"%></p>
+		<% end %>
+		</div>
+		<div id="spinner" style="display: none;"><img src="/images/spinner.gif"></div>
+		
+	<% end %>
+	
+	<div id="results"></div>
+<% else %>
+<p>
+	<%= link_to 'Login via Twitter', '/login' %>
+</p>	
+<% end %>
+</p>
+<% if @users.any? %>
+  <h2>Recently Joined</h2>
+  <% for user in @users %>
+    <%= link_to profile_image(user), user_path(user) %>	
+  <% end %>
+<% end %>
+

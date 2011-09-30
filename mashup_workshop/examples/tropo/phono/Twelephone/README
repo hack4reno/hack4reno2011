@@ -1,0 +1,13 @@
+Twelephone.com is a demo app showcasing the power of PhonoSDK by allowing Twitter users to call each other via browser-to-browser or browser-to-phone calls.  
+
+Note: There is an undocumented feature that allows you to open the phone using http://twelephone.com/dial and place free 10 minute calls to any US or Canadian number as well as any SIP address such as your Gizmo or Blink address by prefacing the address with sip:
+
+== Phono.com == 
+
+Phono is a simple JQuery plugin and JavaScript SDK that turns any web browser into a multi-channel communications platform capable of making phone calls and sending IM messages. You can even connect to SIP clients; all with a simple unified API.
+
+Phone Calls
+Make and receive phone calls directly in your browser using your existing JavaScript skillz. All it takes is a few lines of code!
+
+IM/Chat
+Phono also acts as an XMPP client capable of sending and receiving IM messages to and from any XMPP/Google Talk user

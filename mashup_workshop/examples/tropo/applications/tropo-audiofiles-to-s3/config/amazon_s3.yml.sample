@@ -1,0 +1,3 @@
+bucket_name: myapp_bucket
+access_key_id: <your key>
+secret_access_key: <your key>

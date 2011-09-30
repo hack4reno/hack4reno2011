@@ -1,0 +1,28 @@
+!!! XML
+!!! Strict
+%html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en"}
+	%head
+		%title Tropo Example App: Volunteer Opportunities by Phone
+		%link{ :rel => "stylesheet", :href => "/stylesheets/style.css", :type => "text/css" }
+		%link{ :rel => "stylesheet", :href => "/stylesheets/fonts.css", :type => "text/css" }
+		%link{ :rel => "shortcut icon", :href => "/images/favicon.ico", :type => "image/x-icon" }
+	%body
+		.container
+			.header
+				%h2{ :id => 'herokulogo' }
+					%a{ :href => 'http://heroku.com', :title => 'Heroku' } Heroku
+				%h3{ :id => 'tropologo' }
+					%a{ :href => 'http://tropo.com', :title => 'Tropo' } Tropo
+			.content
+				%h1 Easy Ruby Communication Apps
+				%h2 Steps to recreate:
+				%ol
+					%li You will need to have <a href='http://www.ruby-lang.org/en/downloads/'>Ruby</a>, <a href='http://docs.rubygems.org/read/chapter/3'>Rubygems</a>, <a href='http://docs.heroku.com/heroku-command'>Heroku</a> and <a href='http://book.git-scm.com/2_installing_git.html'>Git</a> installed first.</li>
+					%li Drop into your command line and run the following commands:</li>
+					%ul
+						%li <span style='font-family: monospace;'>git clone http://github.com/tropo/tropo-volunteer.git --depth 1</span></li>
+						%li <span style='font-family: monospace;'>cd tropo-volunteer</span></li>
+						%li <span style='font-family: monospace;'>heroku create</span></li>
+						%li <span style='font-family: monospace;'>git push heroku master</span></li>
+					%li Log in or <a href='https://www.tropo.com/account/register.jsp'>sign up</a> for <a href='http://www.tropo.com'>Tropo</a> and create a new WebAPI application. For the URL, enter in your Heroku app's URL and append <span style='font-family: monospace;'>/index.json</span> to the end of it.</li>
+					%li That's it!  Call in, use, and tinker with your app!</li>

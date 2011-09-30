@@ -1,0 +1,6 @@
+sinatra --version '>=0.9.4'
+mongo --version '>=1.0.1'
+crack --version '>=0.1.7'
+bson_ext --version '>=1.0.1'
+json
+haml

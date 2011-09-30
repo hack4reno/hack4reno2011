@@ -1,0 +1,3 @@
+app_name: tropo-audiofiles
+log_file: log/application.log
+log_level: DEBUG

@@ -1,0 +1,156 @@
+ 
+<ccxml version="1.0" xmlns:voxeo="http://community.voxeo.com/xmlns/ccxml"> 
+    <var name="state0" expr="'init'"/> 
+    <var name="inconn"/> 
+    <var name="dialogid"/> 
+    <var name="outconn"/> 
+    <var name="NumbersToDial" expr="new Array()"/> 
+    <var name="callLength" expr="'600s'"/> 
+    <eventprocessor statevariable="state0"> 
+        <transition event="connection.alerting"> 
+            <assign name="state0" expr="'prenag'"/> 
+            <assign name="inconn" expr="event$.connectionid"/> 
+            <log expr="'===========' +event$.connection.protocol.sip.headers['x-sbc-numbertodial']"/> 
+            <script> 
+                if(typeof event$.connection.protocol.sip.headers['x-sbc-numbertodial']!="undefined") {
+                   NumbersToDial = event$.connection.protocol.sip.headers['x-sbc-numbertodial'].split(",");
+                }
+            </script> 
+            
+            <accept/> 
+        </transition> 
+ 
+        <transition event="connection.connected" state="prenag"> 
+            <!-- handle clipping --> 
+            <send target="session.id" name="'delay'" delay="'2s'"/> 
+        </transition> 
+ 
+        <transition event="delay" state="prenag"> 
+            <!-- if no numbers then they must have dialed the number directly, tell the what it is and then hangup --> 
+            <if cond="NumbersToDial.length==0"> 
+                <assign name="state0" expr="'welcome'"/> 
+                <dialogstart src="'http://hosting.tropo.com/13539/www/audio/phono-welcome.mp3?text=Thank you for calling face book telephone.  This number is used for the face book telephone application to dial your friends for free.  goodbye&amp;termdigits=1&amp;voice=en-us'" type="'application/x-texttospeech'" connectionid="inconn"/> 
+            <else/> 
+                <dialogstart src="'http://hosting.tropo.com/13539/www/audio/phono-prenag.mp3?text=Please hold while Face book Telephone connects your call.  This call will end in ten minutes&amp;termdigits=1&amp;voice=en-us'" type="'application/x-texttospeech'" connectionid="inconn"/> 
+            </if> 
+        </transition> 
+ 
+        <transition event="dialog.started" state="prenag"> 
+            
+        </transition> 
+ 
+        <transition event="dialog.exit" state="welcome"> 
+            <disconnect/> 
+        </transition> 
+ 
+        <transition event="dialog.exit" state="prenag"> 
+            <assign name="state0" expr="'dialing'"/> 
+            <!-- play an audio file until it ends or the user answers the call --> 
+            <dialogstart src="'http://hosting.tropo.com/13539/www/audio/prefetch2.mp3'" dialogid="dialogid" type="'audio/wav'"/>            
+        </transition> 
+ 
+        
+        <transition event="dialog.started" state="dialing"> 
+            <assign name="state0" expr="'outbound'"/> 
+            <var name="num" expr="NumbersToDial.shift()"/> 
+            <createcall dest="num" connectionid="outconn" callerid="+14074904354"/> 
+        </transition> 
+ 
+        <transition event="connection.failed" state="outbound" cond="NumbersToDial.length>0"> 
+            <var name="num" expr="NumbersToDial.shift()"/> 
+            <createcall dest="num" connectionid="outconn" callerid="+14074904354"/>            
+        </transition> 
+ 
+        <transition event="connection.failed" state="outbound" cond="NumbersToDial.length==0"> 
+            <assign name="state0" expr="'failed'"/> 
+            <dialogterminate dialogid="dialogid"/> 
+        </transition> 
+ 
+        <transition event="dialog.exit" state="failed"> 
+            <assign name="state0" expr="'failedmsg'"/> 
+            <dialogstart src="'http://hosting.tropo.com/13539/www/audio/phono-callfailed.mp3?text=None of the numbers dialed were successful.  goodbye&amp;termdigits=1&amp;voice=en-us'" type="'application/x-texttospeech'" connectionid="inconn"/> 
+        </transition> 
+ 
+        <transition event="dialog.exit" state="failedmsg"> 
+            <disconnect/> 
+        </transition> 
+ 
+        <transition event="connection.connected" state="outbound"> 
+            <assign name="state0" expr="'join'"/> 
+            <!-- if the ring dialog exited before us, then start the join, else terminate the ringing --> 
+            <if cond="dialogid==undefined"> 
+                <join id1="inconn" id2="outconn"  voxeo-termdigits="''"/> 
+            <else/> 
+                <dialogterminate dialogid="dialogid"/> 
+            </if> 
+        </transition> 
+ 
+        <transition event="dialog.exit" state="join"> 
+            <join id1="inconn" id2="outconn"  voxeo-termdigits="''"/> 
+            <send target="session.id" name="'hangup'" delay="callLength"/> 
+        </transition> 
+ 
+        <transition event="hangup"> 
+            <assign name="state0" expr="'postnag'"/> 
+            <unjoin id1="inconn" id2="outconn"/> 
+        </transition> 
+ 
+        <transition event="conference.unjoined" cond="event$.id1==inconn" state="postnag"> 
+            <dialogstart src="'http://hosting.tropo.com/13539/www/audio/phono-postnag.mp3?text=Thank you for using Face book telephone, your time has expired.&amp;termdigits=1&amp;voice=en-us'" type="'application/x-texttospeech'" connectionid="inconn"/> 
+        </transition> 
+        
+        <transition event="conference.unjoined" cond="event$.id1==outconn"  state="postnag"> 
+            <disconnect connectionid="event$.id1"/> 
+        </transition> 
+ 
+        <transition event="dialog.started" state="postnag postnaghangup"> 
+        </transition> 
+        
+        <transition event="dialog.exit" state="postnag postnaghangup"> 
+            <disconnect connectionid="inconn"/> 
+        </transition> 
+ 
+        
+        <transition event="dialog.exit" state="dialing outbound"> 
+            <assign name="dialogid" expr="undefined"/> 
+        </transition> 
+        
+        
+        <transition event="connection.progressing"> 
+        </transition> 
+    
+        <!-- caller has hung up, disconnect the callee --> 
+        <transition event="connection.disconnected" cond="event$.connectionid==inconn" state="join"> 
+            <assign name="state0" expr="'final'"/> 
+            <disconnect connectionid="outconn"/> 
+        </transition> 
+        
+        <!-- callee hungup, tell the caller --> 
+        <transition event="connection.disconnected" cond="event$.connectionid==outconn" state="join"> 
+            <!-- wait for the calls to settle --> 
+            <send target="session.id" name="'delay'" delay="'500ms'"/> 
+        </transition> 
+        
+        <transition event="delay" state="join"> 
+            <assign name="state0" expr="'postnaghangup'"/> 
+            <dialogstart src="'http://hosting.tropo.com/13539/www/audio/phono-postnag-hangup.mp3?text=Thank you for using Face book telephone, The other caller has hungup. goodbye.&amp;termdigits=1&amp;voice=en-us'" type="'application/x-texttospeech'" connectionid="inconn"/> 
+        </transition> 
+ 
+        <!-- outgoing is hung up, but incoming is being played a message, so nothing to do --> 
+        <transition event="connection.disconnected" cond="event$.connectionid==outconn" state="postnag"> 
+        </transition> 
+ 
+        <!-- caller hung up, no point in playing a message --> 
+        <transition event="connection.disconnected"> 
+            <exit/> 
+        </transition> 
+        
+        <transition event="dialog.exit"> 
+        </transition> 
+        
+        <transition event="error.*"> 
+            <log expr="'Houston, we have a problem: (' + event$.reason + ')'"/> 
+            <exit/> 
+        </transition> 
+    </eventprocessor> 
+</ccxml>

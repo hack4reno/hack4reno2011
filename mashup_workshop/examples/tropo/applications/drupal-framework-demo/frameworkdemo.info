@@ -1,0 +1,5 @@
+name = Drupal Web Framework Demo
+description = Demonstrate using Drupal as an app framework
+package = A demo
+core = 7.x
+files[] = dcnash.module

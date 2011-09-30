@@ -1,0 +1,9 @@
+; $Id$
+name = "Tropo"
+description = "Allows the SMS Framework to use Tropo as a gateway. Tropo supports SMS, IM (AIM, Yahoo, MSN, GTalk, Jabber), as well as phone calls."
+package = SMS Framework
+dependencies[] = sms
+dependencies[] = token
+dependencies[] = notifications
+dependencies[] = messaging
+core = 6.x

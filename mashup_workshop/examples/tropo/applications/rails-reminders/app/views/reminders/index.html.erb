@@ -1,0 +1,34 @@
+<h1>Listing Reminders</h1>
+<p>Current Time: <%=Time.now.utc%></p>
+
+<p>
+	This is a Tropo application designed to demonstrate building a reminder application using both Voice and SMS alerts.  The application will place an outbound reminder call to you 1 week in advance and then 1 day in advance and an SMS message 1 hour in advance of your appointment time.
+</p>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Message</th>
+    <th>Phone Number</th>
+    <th>Appointment</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @reminders.each do |reminder| %>
+  <tr>
+    <td><%= reminder.name %></td>
+    <td><%= reminder.message %></td>
+    <td><%= reminder.phonenumber %></td>
+    <td><%= reminder.appointment %></td>
+    <td><%= link_to 'Show', reminder %></td>
+    <td><%= link_to 'Edit', edit_reminder_path(reminder) %></td>
+    <td><%= link_to 'Destroy', reminder, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Reminder', new_reminder_path %>

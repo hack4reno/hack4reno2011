@@ -1,0 +1,43 @@
+<h1>Listing users</h1>
+
+<table>
+  <tr>
+    <th>Facebookid</th>
+    <th>Name</th>
+    <th>Firstname</th>
+    <th>Lastname</th>
+    <th>Link</th>
+    <th>Gender</th>
+    <th>Email</th>
+    <th>Timezone</th>
+    <th>Local</th>
+    <th>Verified</th>
+    <th>Token</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @users.each do |user| %>
+  <tr>
+    <td><%= user.facebookid %></td>
+    <td><%= user.name %></td>
+    <td><%= user.firstname %></td>
+    <td><%= user.lastname %></td>
+    <td><%= user.link %></td>
+    <td><%= user.gender %></td>
+    <td><%= user.email %></td>
+    <td><%= user.timezone %></td>
+    <td><%= user.local %></td>
+    <td><%= user.verified %></td>
+    <td><%= user.token %></td>
+    <td><%= link_to 'Show', user %></td>
+    <td><%= link_to 'Edit', edit_user_path(user) %></td>
+    <td><%= link_to 'Destroy', user, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New User', new_user_path %>

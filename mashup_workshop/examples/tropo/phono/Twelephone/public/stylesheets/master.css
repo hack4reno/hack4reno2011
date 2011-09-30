@@ -1,0 +1,253 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  background: #000;
+  height: 100%;
+/*  background: #000 url(/images/twelephonebg2.png) top left repeat-x;*/
+ }
+
+a {
+  color: #06b;
+  font-weight: bold; }
+
+a:hover { color: #06b; background-color:#000; }
+
+a.button {
+  background: #057;
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 8px 15px;
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 10px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px; }
+  a.button:hover {
+    background: #035; }
+
+.clearfix {
+  clear: both; }
+
+#wrapper {
+  background: white;
+  padding: 1.5em 2em;
+  width: 55em;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  border-radius: 1em;
+  margin: .25em auto 0.5em; }
+
+#topwrap {
+  width: 55em;
+  -moz-border-radius: 1em;
+  -webkit-border-radius: 1em;
+  border-radius: 1em;
+  margin: 0em auto ; }
+
+#footer {
+  text-align: center;
+  font-size: 0.8em;
+  color: #666;
+  padding-bottom: 1.5em; }
+
+#header h1 {
+  float: left;
+  font-size: 3em;
+  margin: 0;
+  padding: 0; }
+  #header h1 a {
+    color: #057;
+    margin-bottom: 0.3em;
+    text-decoration: none; }
+#header #user_bar {
+  float: right;
+  margin-top: 0em; }
+  #header #user_bar img {
+    vertical-align: middle; }
+
+p {
+  line-height: 150%;
+  font-size: 1.25em;
+ }
+
+div.flash {
+  padding: 4px 8px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  border: 2px solid #ccc; }
+
+div.error {
+  background: #fcc;
+  border-color: #911;
+  color: #311; }
+
+div.notice {
+  background: #cfc;
+  border-color: #191;
+  color: #131; }
+
+a img {
+  border: 0; }
+
+table.listener-list {
+  float: left;
+  margin: 0 50px; }
+  table.listener-list tr:last-child td {
+    border-bottom: 0; }
+  table.listener-list td {
+    border-bottom: 1px dashed #aaa;
+    padding: 10px 0; }
+  table.listener-list td.image {
+    text-align: right; }
+  table.listener-list td.screen_name {
+    font-size: 22px;
+    text-align: center;
+    padding: 10px 15px; }
+    table.listener-list td.screen_name a {
+      color: #333;
+      text-decoration: none; }
+  table.listener-list td.count {
+    font-size: 1.2em; }
+
+table.list-smaller td {
+  padding: 8px 0; }
+table.list-smaller img {
+  width: 28px;
+  height: 28px; }
+table.list-smaller td.screen_name {
+  padding: 8px 15px; }
+table.list-smaller td.screen_name a {
+  font-size: 18px; }
+
+/*
+Template Name: OnlineStudio
+File: Forms CSS
+Author: OS Templates
+Author URI: http://www.os-templates.com/
+Licence: <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>
+*/
+
+form, fieldset, legend {margin:0; padding:0; border:none;}
+legend{display:none;}
+
+/* ----------------------------------------------Forms in Content Area-------------------------------------*/
+
+#container #respond{display: block; width:100%;}
+
+#container #respond input{width:170px; padding:2px; border:1px solid #CCCCCC; margin:5px 5px 0 0;}
+
+#container #respond textarea{width:98%; border:1px solid #CCCCCC; padding:2px; overflow:auto;}
+
+#container #respond p{margin:5px 0;}
+
+#container #respond #submit, #container #respond #reset{
+	margin:0;
+	padding:5px;
+	color:#666666;
+	background-color:#F7F7F7;
+	border:1px solid #CCCCCC;
+	}
+
+/* ----------------------------------------------Contact Form in Footer-------------------------------------*/
+
+#contactform form{
+	margin:0;
+	padding:0;
+	border:none;
+	line-height:normal;
+	}
+
+#contactform label{
+	display:inline;
+	width:170px;
+	float:left;
+	margin:0 0 12px 0;
+	padding:0;
+	}
+
+#contactform label.margin{
+	margin-left:10px;
+	}
+
+#contactform label input, #contactform label textarea{
+	display:block;
+	width:162px;
+	margin:5px 0;
+	padding:3px;
+	color:#000000;
+	background-color:#F7F7F7;
+	border:1px solid #CCCCCC;
+	}
+
+
+#contactform label textarea{
+	display:block;
+	width:342px;
+	overflow:auto;
+	}
+
+#contactform p{
+	display:block;
+	width:350px;
+	margin:0;
+	padding:0;
+	clear:both;
+	}
+
+#contactform p input{
+	padding:5px 10px;
+	color:#666666;
+	background-color:#F7F7F7;
+	border:1px solid #CCCCCC;
+	}
+
+
+#contactform input:focus, select:focus, textarea:focus {background: none repeat scroll 0 0 #FFFF99;}
+
+#generalform input:focus, select:focus, textarea:focus {background: none repeat scroll 0 0 #FFFF99; line-height:21px; font-size: 21px;}
+#generalform input, select, textarea {line-height:21px; font-size: 21px; }
+
+#generalform p input{
+	padding:5px 10px;
+	color:#666666;
+	background-color:#F7F7F7;
+	border:1px solid #CCCCCC;
+	}
+
+
+/* ----------------------------------------------Newsletter-------------------------------------*/
+
+#newsletter form{
+	display:block;
+	float:right;
+	width:285px;
+	margin:0;
+	padding:0;
+	border:none;
+	}
+
+#newsletter input{
+	display:block;
+	float:left;
+	width:230px;
+	margin:0 5px 0 0;
+	padding:5px;
+	color:#666666;
+	background-color:#FFFFFF;
+	border:1px solid #CCCCCC;
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:12px;
+	}
+
+#newsletter input#news_go{
+	width:auto;
+	height:auto;
+	margin:0;
+	padding:4px;
+	}
+		

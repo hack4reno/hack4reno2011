@@ -1,0 +1,84 @@
+[submodule "examples"]
+	path = examples
+	url = git://github.com/tropo/tropo-samples.git
+[submodule "libraries/tropo-webapi-node"]
+	path = libraries/tropo-webapi-node
+	url = git://github.com/tropo/tropo-webapi-node
+[submodule "libraries/tropo-webapi-csharp"]
+	path = libraries/tropo-webapi-csharp
+	url = git://github.com/tropo/tropo-webapi-csharp
+[submodule "libraries/tropo-webapi-php"]
+	path = libraries/tropo-webapi-php
+	url = git://github.com/tropo/tropo-webapi-php
+[submodule "libraries/tropo-webapi-python"]
+	path = libraries/tropo-webapi-python
+	url = git://github.com/tropo/tropo-webapi-python
+[submodule "applications/tropo-agitate"]
+	path = applications/tropo-agitate
+	url = git://github.com/tropo/tropo-agitate.git
+[submodule "applications/tropo-volunteer"]
+	path = applications/tropo-volunteer
+	url = git://github.com/tropo/tropo-volunteer.git
+[submodule "applications/tropo-results-mongoDB"]
+	path = applications/tropo-results-mongoDB
+	url = git://github.com/tropo/tropo-results-mongoDB.git
+[submodule "applications/tropo-transcriptions"]
+	path = applications/tropo-transcriptions
+	url = git://github.com/tropo/tropo-transcriptions.git
+[submodule "applications/tropo-audiofiles-to-s3"]
+	path = applications/tropo-audiofiles-to-s3
+	url = git://github.com/tropo/tropo-audiofiles-to-s3.git
+[submodule "applications/openvoice"]
+	path = applications/openvoice
+	url = git://github.com/openvoice/openvoice.git
+[submodule "libraries/tropo-webapi-ruby"]
+	path = libraries/tropo-webapi-ruby
+	url = git://github.com/tropo/tropo-webapi-ruby.git
+[submodule "applications/Tropo-Twitter-by-Phone"]
+	path = applications/Tropo-Twitter-by-Phone
+	url = git://github.com/voxeo/Tropo-Twitter-by-Phone.git
+[submodule "phono/PhonoSDK"]
+	path = phono/PhonoSDK
+	url = git://github.com/phono/PhonoSDK.git
+[submodule "phono/Facebook-Telephone"]
+	path = phono/Facebook-Telephone
+	url = git://github.com/phono/Facebook-Telephone.git
+[submodule "phono/Twelephone"]
+	path = phono/Twelephone
+	url = git://github.com/phono/Twelephone.git
+[submodule "applications/tropo_access_num"]
+	path = applications/tropo_access_num
+	url = git://github.com/mikesoares/tropo_access_num.git
+[submodule "applications/phonepoll"]
+	path = applications/phonepoll
+	url = git@github.com:akalsey/phonepoll.git
+[submodule "applications/cloudfiles-poster"]
+	path = applications/cloudfiles-poster
+	url = git://github.com/akalsey/cloudfiles-poster
+[submodule "applications/drupal_sms"]
+	path = applications/drupal_sms
+	url = git://github.com/tropo/sms_tropo
+[submodule "applications/drupal-framework-demo"]
+	path = applications/drupal-framework-demo
+	url = git://github.com/akalsey/drupal-framework-demo
+[submodule "phono/callme-button"]
+	path = phono/callme-button
+	url = https://github.com/phono/callme
+[submodule "phono/demo"]
+	path = phono/demo
+	url = https://github.com/phono/barcamp-orlando-2011.git
+[submodule "applications/redis-demo"]
+	path = applications/redis-demo
+	url = git@github.com:tropo/tropo-redis.git
+[submodule "applications/CloudKnock"]
+	path = applications/CloudKnock
+	url = git@github.com:tropo/CloudKnock.git
+[submodule "applications/simpleMessage"]
+	path = applications/simpleMessage
+	url = https://github.com/tropo/simpleMessage
+[submodule "applictions/rails-reminders"]
+	path = applictions/rails-reminders
+	url = git@github.com:tropo/reminders.git
+[submodule "applications/rails-reminders"]
+	path = applications/rails-reminders
+	url = git@github.com:tropo/reminders.git

@@ -1,0 +1,31 @@
+= Welcome to the Tropo Reminder Demo
+
+This is a Tropo application designed to demonstrate building a reminder application using both Voice and SMS alerts.  The application will place an outbound reminder call to you 1 week in advance and then 1 day in advance and an SMS message 1 hour in advance of your appointment time.
+
+== Installing this application on your localhost
+
+Clone app from GitHub
+
+bundle install
+rake db:create
+rake db:migrate
+
+== Create Tropo app using the Scripting API
+
+Setup an account at Tropo (http://tropo.com)
+
+Create a new application
+
+Copy and paste source code from tropo_scripting_api.rb into separate scripts running under the same application. One for placing outbound voice call reminders and one for sending SMS message reminders.
+
+Add a phone number to your application.  SMS messages will not work without one.
+
+== Running your application
+
+Open your web browser to http://localhost:3000
+
+Setup Cron job to call http://localhost:3000/api/check every 5 minutes
+
+
+
+

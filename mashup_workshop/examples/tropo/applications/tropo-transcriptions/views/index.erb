@@ -1,0 +1,18 @@
+<h1>Voxeo Transcription Results</h1>
+<table border=1>
+	<tr>
+		<th>ID</th>
+		<th>GUID</th>
+		<th>Identifier</th>
+		<th>Message</th>
+	</tr>
+
+<% @transcriptions.each do |transcription| %>
+	<tr>
+		<td><%= transcription.id %></td>
+		<td><%= transcription.guid %></td>
+		<td><%= transcription.identifier %></td>
+		<td><%= transcription.message %></td>
+	</tr>
+<% end %>
+</table>

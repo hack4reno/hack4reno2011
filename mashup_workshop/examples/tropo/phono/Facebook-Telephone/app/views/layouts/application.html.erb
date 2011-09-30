@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Telephone</title>
+  <%= stylesheet_link_tag 'scaffold' %>
+  <%= javascript_include_tag :defaults %>
+  <%= csrf_meta_tag %>
+
+  <%= stylesheet_link_tag 'redbox' %>
+  <%= javascript_include_tag 'redbox' %>
+
+	<script language="javascript" type="text/javascript">
+	<!--
+	function popitup(url) {
+		var left = (screen.width/2)-(275/2);
+		var top = (screen.height/2)-(375/2);
+		newwindow=window.open(url,'name', 'height=375,width=275,toolbars=no,menubar=no,location=no,scrollbars=no,resizable=yes,status=no,top='+top+', left='+left);
+		
+		// newwindow=window.open(url,'name', 'toolbar=no,location=no,directories=no,status=yes,menubar=no,resizable=no,copyhistory=no,scrollbars=no,height=375,width=275,left=0,top=0,screenX=0,screenY=0');
+		
+		if (window.focus) {newwindow.focus()}
+		return false;
+	}
+
+	// -->
+	</script>
+	
+  <%= yield(:head) %>
+
+</head>
+<body>
+	
+<div id="container">	
+<div id="sidebar">
+	<p><h2><%=image_tag 'spaz-icon-alpha.png', {:width=>"75"}%><br/>
+	
+	Telephone
+	</h2>
+	<center>
+		<a href="http://www.facebook.com/apps/application.php?id=104425026288823" target="_parent">App Home/Reviews</a>
+		
+	<!-- <%=link_to "Terms", "/terms" %> | <%=link_to "Policy", "/policy" %></center> -->
+	<%#link_to "App Home", "http://www.facebook.com/apps/application.php?id=104425026288823&v=page_getting_started", {:target=>"_parent"} %></p>
+	<p><br/>
+	<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fapps.facebook.com%2Ftelephone&amp;layout=button_count&amp;show_faces=true&amp;width=100&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
+	</p>
+	<p>
+		<div id="generalform">
+			<a onclick='window.open("http://www.facebook.com/sharer.php?u=http://apps.facebook.com/telephone&amp;t=I just discovered Facebook Telephone a new telephone service for Facebook! http://apps.facebook.com/telephone", "facebook&amp;", "toolbar=no, width=550, height=550"); return false;' href='http://www.facebook.com/sharer.php?u=http://apps.facebook.com/telephone&amp;'  class='facebookShare'><button type="button"><span>Share link</span></button> </a>
+		</div>
+			
+	</p>
+</div>		
+
+<div id="content">
+	
+	<div id="inline_invite" style="display: none">
+	<div style="width: 450px">
+	<%= link_to_close_redbox(raw('<img src="/images/close-btn.png" align="right" width="24" height="24" class="close-btn" border="0">'), html_options = {}) %>
+	<center>
+		<h1>Invitation</h1><br/>
+		<%= %>
+		<div id="generalform">
+			<%= form_tag url_for(:controller => "facebook", :action => "invite"), :id => "tool-form", :remote => true do %>
+			  <%= text_area_tag "message", "Check out the new Telephone on Facebook!  http://apps.facebook.com/telephone", {:cols => 40, :rows => 5} %><br />
+			  <br />
+			  <%= submit_tag "Send" %>
+			<% end %>
+		</div>
+	</center>
+	</div>
+	</div>
+
+	<div id="inline_phone" style="display: none">
+	<div style="width: 450px">
+	<%= link_to_close_redbox(raw('<img src="/images/close-btn.png" align="right" width="24" height="24" class="close-btn" border="0">'), html_options = {}) %>
+	<center>
+		<h1>Your Number</h1><br/>
+		<div id="generalform">
+			<%= form_tag url_for(:controller => "facebook", :action => "numberupdate"), :id => "number-form", :remote => true do %>
+			  
+			  <%= text_field_tag "phonenumber" %><br />
+			  <br />
+			  <%= submit_tag "Update" %>
+			<% end %>
+		</div>
+	</center>
+	</div>
+	</div>
+
+	<%= yield %>
+
+</div>
+</div>
+
+<!-- <div id="footer">
+	<p>&copy; Voxeo</p>
+</div> -->
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-119008-17']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</body>
+</html>

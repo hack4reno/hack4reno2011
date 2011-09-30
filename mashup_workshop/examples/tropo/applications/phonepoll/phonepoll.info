@@ -1,0 +1,5 @@
+name = Phone Poll
+description = Accept votes for polls over the phone
+package = Tropo
+core = 6.x
+dependencies[] = poll 

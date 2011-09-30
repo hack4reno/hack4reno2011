@@ -1,0 +1,32 @@
+<?php
+function phonepoll_install() {
+  //create tables
+  drupal_install_schema('phonepoll');
+  drupal_set_message(t('Phone poll module installed successfully. You should make sure that anonymous users can vote in polls. Polling by phone won\'t work without it.'));
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function phonepoll_schema() {
+  $schema = array();
+  $schema['phonepoll'] = array(
+    'fields' => array(
+       'nid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0, 'disp-width' => '10'),
+       'address' => array('type' => 'varchar', 'length' => '255', 'not null' => FALSE),
+       'network' => array('type' => 'varchar', 'length' => '32', 'not null' => TRUE),
+       ),
+  );
+  return $schema;
+}
+
+function phonepoll_uninstall() {
+  //remove tables
+  drupal_uninstall_schema('phonepoll');
+  $variables = db_query("SELECT name FROM {variable} WHERE name LIKE 'phonepoll%%'");
+  while ($variable = db_fetch_object($variables)) {
+    variable_del($variable->name);
+  }
+  update_sql("DELETE FROM {system} WHERE name like '%phonepoll'");
+}
+?>

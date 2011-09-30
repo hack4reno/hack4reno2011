@@ -1,0 +1,18 @@
+%html
+	%head
+		%title Tropo Transcription Results
+		%img(src="/images/logo_tropo.gif" align="left" alt="Tropo" width="200" height="124")
+	%body{ :id => 'transcriptions' }
+		%div
+		%br
+		%br
+		%br
+		%br
+		%br
+		%br
+		%br
+		%h1 Transcription Results
+		%br
+		- @results.each_with_index do |result, index|
+			#{ (index + 1).to_s } - Transcription: #{ result['transcription']['result']['transcription'] } - Guid:  #{ result['transcription']['result']['guid'] }
+		    

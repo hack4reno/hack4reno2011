@@ -1,0 +1,6 @@
+app_name: tropo-results-mongodb
+log_file: log/application.log
+log_level: DEBUG
+
+mongo:
+    collection: transcriptions

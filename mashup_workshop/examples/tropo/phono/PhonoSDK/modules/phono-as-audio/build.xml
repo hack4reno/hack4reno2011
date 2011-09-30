@@ -1,0 +1,36 @@
+<project name="phono-as-media" default="build">
+
+  <target name="build" depends="clean">
+    
+    <fail message="Please set FLEX_HOME in build.properties">
+      <condition>
+        <not>
+          <available file="${FLEX_HOME}" />
+        </not>
+      </condition>
+    </fail>    
+
+    <taskdef resource="flexTasks.tasks" classpath="${flextasks}"/>
+    
+    <mkdir dir="target" />
+    
+    <!-- Compile -->
+    <mxmlc file="${basedir}/src/PhonoMedia.mxml" output="${basedir}/target/phono.audio.swf"> 
+        <source-path path-element="${basedir}/src" /> 
+    </mxmlc> 
+    
+    <!-- Binary -->
+    <copy file="target/phono.audio.swf" todir="../../target/sdk/plugins/audio/" />
+
+    <!-- Source -->
+    <copy todir="../../target/src/phono-as-audio" overwrite="true">
+      <fileset dir="src" />
+    </copy>
+    
+  </target>
+  
+  <target name="clean">
+    <delete dir="target" />
+  </target>
+  
+</project>

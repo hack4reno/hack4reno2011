@@ -1,0 +1,60 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Facebookid:</b>
+  <%= @user.facebookid %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%= @user.name %>
+</p>
+
+<p>
+  <b>Firstname:</b>
+  <%= @user.firstname %>
+</p>
+
+<p>
+  <b>Lastname:</b>
+  <%= @user.lastname %>
+</p>
+
+<p>
+  <b>Link:</b>
+  <%= @user.link %>
+</p>
+
+<p>
+  <b>Gender:</b>
+  <%= @user.gender %>
+</p>
+
+<p>
+  <b>Email:</b>
+  <%= @user.email %>
+</p>
+
+<p>
+  <b>Timezone:</b>
+  <%= @user.timezone %>
+</p>
+
+<p>
+  <b>Local:</b>
+  <%= @user.local %>
+</p>
+
+<p>
+  <b>Verified:</b>
+  <%= @user.verified %>
+</p>
+
+<p>
+  <b>Token:</b>
+  <%= @user.token %>
+</p>
+
+
+<%= link_to 'Edit', edit_user_path(@user) %> |
+<%= link_to 'Back', users_path %>

@@ -1,0 +1,246 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Adds support for sending SMS messages using Tropo.
+ * Tropo also supports IMs and phone calls, so this gateway module does too. Read the README for the caveats to that.
+ */
+
+/**
+	*	Incoming message handling and host Tropo script route
+	*/
+function sms_tropo_menu() {
+  $items = array();
+	// Create a web route to the tropo_scripting_app.php file included in this module.
+	// The file includes the code which Tropo will HTTP GET and execute in the cloud when a message is received or sent.
+	$items['sms/tropo/scripting_app.php'] = array(
+  	'title' => 'Self-Hosted Tropo Scripting App',
+  	'page callback' => 'sms_tropo_scripting_app_callback',
+  	'access arguments' => array('access content'),
+  	'type' => MENU_CALLBACK,
+	); 
+	// Define a route to which our Tropo app will send the incoming IM/SMS content to.
+	$items['sms/tropo/receive'] = array(
+	  'title' => "Tropo message receiver",
+	  'page callback' => 'sms_tropo_incoming_callback',
+		'access arguments' => array('access content'),
+	  'type' => MENU_CALLBACK,
+	);
+  return $items;
+}
+
+/**
+ * Implementation of hook_gateway_info().
+ */
+function sms_tropo_gateway_info() {
+  return array(
+    'tropo' => array(
+      'name' => 'Tropo',
+      'receive' => TRUE,
+      'configure form' => 'sms_tropo_admin_form',
+      'send' => 'sms_tropo_send',
+      'send form' => 'sms_tropo_send_form',
+      'other form' => 'sms_tropo_other_form',
+    ),
+  );
+}
+
+function sms_tropo_admin_form($configuration) {
+  $form['sms_tropo_ssl'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use SSL Encyption'),
+    '#description' => t('Drupal\'s built-in HTTP client only supports SSL on PHP 4.3 compiled with OpenSSL.'),
+    '#default_value' => $configuration['sms_tropo_ssl']
+  );
+  $form['sms_tropo_text_token'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Messaging Token'),
+    '#description' => t('This is your Tropo application\'s unique identifier for firing off text messages and IMs.'),
+    '#size' => 40,
+    '#maxlength' => 255,
+    '#default_value' => $configuration['sms_tropo_text_token']
+  );
+
+	// Voice options! That's right, Tropo makes it as easy to fire off a phone call as it is to send an SMS/IM
+  $form['sms_tropo_voice'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Voice/Phone Call Options'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['sms_tropo_voice']['sms_tropo_voice_token'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Voice Token'),
+    '#description' => t('This is your Tropo application\'s unique identifier for initiating phone calls.'),
+    '#size' => 40,
+    '#maxlength' => 255,
+    '#default_value' => $configuration['sms_tropo_voice_token']
+  );
+  $form['sms_tropo_voice']['sms_tropo_say_prepend'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Prepend to message'),
+    '#description' => t('We will add this text to the beginning of the phone call.<br />You may want to put something like \'This is a phone call from SITE.COM. The following notification has been triggered:\''),
+    '#size' => 40,
+    '#maxlength' => 255,
+    '#default_value' => $configuration['sms_tropo_say_prepend']
+  );
+  $form['sms_tropo_voice']['sms_tropo_say_append'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Append to message'),
+    '#description' => t('We will add this text to the end of the phone call.<br />You may want to put something like \'End of notification message. You can change your settings at SITE.COM. Click on my account and then mobile settings. Good bye.\''),
+    '#size' => 40,
+    '#maxlength' => 255,
+    '#default_value' => $configuration['sms_tropo_say_append']
+  );
+
+  $form['sms_tropo_enabled_networks'] = array(
+    '#type' => 'select',
+    '#title' => t('Enabled Networks (Message Types)'),
+    '#description' => t('These (the ones you select) are the protocols from which your users will be able to send messages with.<br />Tropo supports all these protocols but you need to set them up with your Tropo app before they will work.<br />SMS is automatically enabled once you add a phone number to your Tropo app.'),
+    '#multiple' => TRUE,
+    '#options' => sms_tropo_networks(),
+    '#default_value' => $configuration['sms_tropo_enabled_networks']
+  );
+
+  return $form;
+}
+
+/**
+ * Returns custom additions to be added to the send forms
+ */
+function sms_tropo_send_form() {
+	// Get settings from the DB. If for some reason we can't find them, allow user to only SMS.
+	$settings = variable_get('sms_tropo_settings',array('sms_tropo_enabled_networks' => array('SMS' => 'SMS')));
+	$available_networks = sms_tropo_networks();
+	$enabled_networks = $settings['sms_tropo_enabled_networks'];
+	foreach ($enabled_networks as $k => $v) { $enabled_networks[$k] = $available_networks[$k]; }
+  $form['network'] = array(
+    '#type' => 'select',
+    '#title' => t('Message Type'),
+    '#multiple' => FALSE,
+    '#options' => $enabled_networks,
+    '#default_value' => "SMS",
+  );
+  return $form;
+}
+
+function sms_tropo_other_form($account) {
+	$available_networks = sms_tropo_networks();
+  $form['network'] = array(
+    '#type' => 'item',
+    '#title' => t('Message Type'),
+    '#value' => $available_networks[$account->sms_user[0]['gateway']['network']] // this gives the user-friendly name of the network.
+  );
+  return $form;
+}
+
+/**
+ * Callback for sending messages.
+ */
+function sms_tropo_send($number, $message, $options) {
+	watchdog('sms_tropo','sms_tropo_send options:  <br />' . print_r($options,TRUE));
+	$network = $options['network'];
+  return sms_tropo_command('create', array('number' => $number, 'message' => $message, 'network' => $network));
+}
+
+/**
+ * Executes a command using the Tropo Session API
+ */
+function sms_tropo_command($command = 'create', $data = array(), $config = NULL) {
+  $gateway = sms_gateways('gateway', 'tropo');
+  
+  if ($config == NULL) {
+    $config = $gateway['configuration'];
+  }
+  
+  if ($config['sms_tropo_ssl']) {
+    $scheme = 'https';
+  }
+  else {
+    $scheme = 'http';
+  }
+  
+	// We're using a switch statement to be able to support future API calls like billing and call detail record queries
+  switch ($command) {
+    case 'create':
+			// Set $channel (Tropo expects "text" or "voice") and voice-specific options.
+			if (strtolower($data['network']) == 'voice') {
+				$data['channel'] = 'voice';
+				$data['message'] = $config['sms_tropo_say_prepend'] . ' , ' . $data['message'] . ' , ' . $config['sms_tropo_say_append'];
+			}
+			else {
+				$data['channel'] = 'text';
+			}
+      // Check if the message requires unicode handling
+      if ($unicode_message = sms_tropo_unicode($data['message'])) {
+				$message = $unicode_message;
+			}
+      else {
+				$message = drupal_urlencode($data['message']);
+			}
+			// Because messaging_sms module assumes just SMS, not multiple networks, set the network if it's set.
+			// 	 (We set this in messaging_sms.module through a code modification since it doesn't pass that information to us)
+			if (isset($data['network'])) {
+				$data['number'] = $data['number'] . '&network=' . $data['network'];
+			}
+			// Build query string
+			$query = '&token=' . $config['sms_tropo_' . $data['channel'] . '_token']; // use the appropriate (text or voice) token
+			$query .= '&to=' . $data['number'] . '&channel=' . $data['channel'] . '&message=' . $message;
+      break;
+  }
+  // Run the command
+	$url = $scheme . '://api.tropo.com/1.0/sessions?action=' . $command . $query;
+  $http_result = drupal_http_request($url);
+	watchdog('sms_tropo', "DRUPAL_HTTP_REQUEST RESULT: " . print_r($http_result,TRUE));
+	// Check for HTTP errors
+  if ($http_result->error) {
+    return array('status' => FALSE, 'message' => t('An error occured during the HTTP request: ', array('@error' => $http_result->error)));
+  }
+  if ($http_result->data) {
+		$result = array('status' => TRUE, 'data' => $http_result->data);
+  }
+  return $result;
+}
+
+function sms_tropo_networks() {
+  return array(
+		// back-end name => friendly name
+    "SMS" => "SMS / Text Message",
+		"AIM" => "AOL IM",
+		"GTALK" => "Google Talk IM",
+		"YAHOO" => "Yahoo IM",
+		"MSN" => "MSN IM",
+		"JABBER" => "Jabber IM",
+		"VOICE" => "Voice (Phone Call)"
+  );
+}
+
+/**
+ * Converts a string to USC-2 encoding if neccessary.
+ */
+function sms_tropo_unicode($message) {
+  if (function_exists('iconv')) {
+    $latin = @iconv('UTF-8', 'ISO-8859-1', $message);
+    if (strcmp($latin, $message)) {
+      $arr = unpack('H*hex', @iconv('UTF-8', 'UCS-2BE', $message));
+      return strtoupper($arr['hex']) . '&unicode=1';
+    }
+  }
+  return FALSE;
+}
+
+function sms_tropo_scripting_app_callback() {
+	header("Content-Type: text/plain; charset=utf-8");
+	$path_to_module = drupal_get_path('module', 'sms_tropo');
+	readfile($path_to_module . "/tropo_scripting_app.php");
+	die;
+}
+
+
+function sms_tropo_incoming_callback() {
+	$received = file_get_contents("php://input");
+	$received = json_decode($received);
+	watchdog('sms_tropo',"Received incoming communication from Tropo: <br /><br />" . print_r($received,TRUE));
+  sms_incoming($received['callerID'], $received['initialText'], array('network' => $received['network'],'channel' => $received['channel']));
+}
