@@ -1,0 +1,11 @@
+http://www.washoecounty.us/index/rss.html
+L inks to RSS feeds for the County and its departments
+
+http://www.washoecounty.us/repository/events_rss.php
+Consolidated County vCalendar feed.
+
+http://www.washoecounty.us/GIS/datawarehouse.htm
+Shape data and point data for various maps
+
+http://washoe-nv.granicus.com/ViewPublisherRSS.php?view_id=6
+RSS feed for County videos
